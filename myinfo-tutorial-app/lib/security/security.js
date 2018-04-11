@@ -41,16 +41,16 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // A) Construct the Authorisation Token
   var defaultApexHeaders = {
     "apex_l2_eg_app_id": appId,
-    "apex_l2_eg_nonce": nonceValue,
+    "apex_l2_eg_nonce": nonceValue, // unique number
     "apex_l2_eg_signature_method": "SHA256withRSA",
-    "apex_l2_eg_timestamp": timestamp,
+    "apex_l2_eg_timestamp": timestamp, // epoch timestamp
     "apex_l2_eg_version": "1.0"
   };
 
   // Remove params unless Content-Type is "application/x-www-form-urlencoded"
-  if (method == "POST" && strContentType != "application/x-www-form-urlencoded") {
-    params = {};
-  }
+  // if (method == "POST" && strContentType != "application/x-www-form-urlencoded") {
+  //   params = {};
+  // }
 
   // B) Forming the Signature Base String
 
@@ -58,9 +58,12 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   var baseParams = sortJSON(_.merge(defaultApexHeaders, params));
 
   var baseParamsStr = qs.stringify(baseParams);
-  baseParamsStr = qs.unescape(baseParamsStr);
+  baseParamsStr = qs.unescape(baseParamsStr); // url safe
 
   // ii) construct request URL ---> url is passed in to this function
+  // NOTE: need to include the ".e." in order for the security authorisation header to work
+  //myinfosgstg.api.gov.sg -> myinfosgstg.e.api.gov.sg
+  url = _.replace(url, ".api.gov.sg", ".e.api.gov.sg");
 
   // iii) concatenate request elements
   var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
@@ -80,6 +83,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
         .update(baseString)
         .sign(signWith, 'base64');
 
+// arrange it so that the attributes are listed
   // D) Assembling the Header
   var strApexHeader = "apex_l2_eg realm=\"" + realm + "\",apex_l2_eg_timestamp=\"" + timestamp +
     "\",apex_l2_eg_nonce=\"" + nonceValue + "\",apex_l2_eg_app_id=\"" + appId +
@@ -99,7 +103,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
  */
 security.generateAuthorizationHeader = function (url, params, method, strContentType, authType, appId, keyCertContent, passphrase, realm) {
     // NOTE: need to include the ".e." in order for the security authorisation header to work
-    url = _.replace(url, ".api.gov.sg", ".e.api.gov.sg");
+    // url = _.replace(url, ".api.gov.sg", ".e.api.gov.sg");
 
 	if (authType == "L2") {
         return generateSHA256withRSAHeader(url, params, method, strContentType, appId, keyCertContent, passphrase, realm);

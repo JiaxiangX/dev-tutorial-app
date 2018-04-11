@@ -259,7 +259,7 @@ The online tutorial 3 is at: [https://myinfo-api.app.gov.sg/dev/tutorial3](https
 
 >Tutorial 2 must be completed in order to proceed with Tutorial 3.
 
-### Step 1: Switching to L2 API
+### Step 1: Switching to Secured API
 
 Uncomment L2 APIs
 

@@ -80,37 +80,7 @@ router.post('/getPersonData', function(req, res, next) {
   // **** CALL TOKEN API ****
   // Call the Token API (with the authorisation code)
   // t2step2 PASTE CODE BELOW
-  request = createTokenRequest(code);
-  request
-    .buffer(true)
-    .end(function(callErr, callRes) {
-      if (callErr) {
-        // ERROR
-        res.jsonp({
-          status: "ERROR",
-          msg: callErr
-        });
-      } else {
-        // SUCCESSFUL
-        var data = {
-          body: callRes.body,
-          text: callRes.text
-        };
-        console.log("\x1b[32m", "Response from Token API:", "\x1b[0m");
-        console.log(JSON.stringify(data.body));
-
-        var accessToken = data.body.access_token;
-        if (accessToken == undefined || accessToken == null) {
-          res.jsonp({
-            status: "ERROR",
-            msg: "ACCESS TOKEN NOT FOUND"
-          });
-        }
-
-        // everything ok, call person API
-        callPersonAPI(accessToken, res);
-      }
-    });
+  
   // t2step2 END PASTE CODE
 
 });
@@ -118,24 +88,7 @@ router.post('/getPersonData', function(req, res, next) {
 function callPersonAPI(accessToken, res) {
   // validate and decode token to get UINFIN
   // t2step4 PASTE CODE BELOW
-  var decoded = securityHelper.verifyJWS(accessToken, _publicCertContent);
-  if (decoded == undefined || decoded == null) {
-    res.jsonp({
-      status: "ERROR",
-      msg: "INVALID TOKEN"
-    })
-  }
 
-  console.log("\x1b[32m", "Decoded Access Token:", "\x1b[0m");
-  console.log(JSON.stringify(decoded));
-
-  var uinfin = decoded.sub;
-  if (uinfin == undefined || uinfin == null) {
-    res.jsonp({
-      status: "ERROR",
-      msg: "UINFIN NOT FOUND"
-    });
-  }
   // t2step4 END PASTE CODE
   var decoded = securityHelper.verifyJWS(accessToken, _publicCertContent);
   if (decoded == undefined || decoded == null) {
@@ -158,56 +111,7 @@ function callPersonAPI(accessToken, res) {
   // **** CALL PERSON API ****
   // Call Person API using accessToken
   // t2step5 PASTE CODE BELOW
-  var request = createPersonRequest(uinfin, accessToken);
 
-  // Invoke asynchronous call
-  request
-    .buffer(true)
-    .end(function(callErr, callRes) {
-      if (callErr) {
-        res.jsonp({
-          status: "ERROR",
-          msg: callErr
-        });
-      } else {
-        // SUCCESSFUL
-        var data = {
-          body: callRes.body,
-          text: callRes.text
-        };
-        // t3step4 REPLACE CODE BELOW
-        var personJWS = data.text;
-        if (personJWS == undefined || personJWS == null) {
-          res.jsonp({
-            status: "ERROR",
-            msg: "PERSON DATA NOT FOUND"
-          });
-        } else {
-          console.log("\x1b[32m", "Person Data (JWS):", "\x1b[0m");
-          console.log(personJWS);
-
-          var personData;
-          // verify signature & decode JWS to get the person data in JSON
-          personData = securityHelper.verifyJWS(personJWS, _publicCertContent);
-        // t3step4 END REPLACE CODE
-
-          if (personData == undefined || personData == null)
-            res.jsonp({
-              status: "ERROR",
-              msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-            });
-          personData.uinfin = uinfin; // add the uinfin into the data to display on screen
-
-          console.log("\x1b[32m", "Person Data (Decoded):", "\x1b[0m");
-          console.log(JSON.stringify(personData));
-          // successful. return data back to frontend
-          res.jsonp({
-            status: "OK",
-            text: personData
-          });
-        }
-      }
-    });
   // t2step5 END PASTE CODE
 
 }
@@ -221,37 +125,7 @@ function createTokenRequest(code) {
 
   // preparing the request with header and parameters
   // t2step3 PASTE CODE BELOW
-  // assemble params for Token API
-  var strParams = "grant_type=authorization_code" +
-    "&code=" + code +
-    "&redirect_uri=" + _redirectUrl +
-    "&client_id=" + _clientId +
-    "&client_secret=" + _clientSecret;
-  var params = querystring.parse(strParams);
 
-
-  // assemble headers for Token API
-  var strHeaders = "Content-Type=" + contentType + "&Cache-Control=" + cacheCtl;
-  var headers = querystring.parse(strHeaders);
-
-  // Add Authorisation headers for connecting to API Gateway
-  // t3step2 PASTE CODE BELOW
-
-  // t3step2 END PASTE CODE
-
-
-  console.log("\x1b[32m", "Request Header for Token API:", "\x1b[0m");
-  console.log(JSON.stringify(headers));
-
-  var request = restClient.post(_tokenApiUrl);
-
-  // Set headers
-  if (!_.isUndefined(headers) && !_.isEmpty(headers))
-    request.set(headers);
-
-  // Set Params
-  if (!_.isUndefined(params) && !_.isEmpty(params))
-    request.send(params);
   // t2step3 END PASTE CODE
 
   return request;
@@ -265,36 +139,6 @@ function createPersonRequest(uinfin, validToken) {
   var request = null;
   // assemble params for Person API
   // t2step6 PASTE CODE BELOW
-  ar strParams = "client_id=" + _clientId +
-    "&attributes=" + _attributes;
-  var params = querystring.parse(strParams);
-
-  // assemble headers for Person API
-  var strHeaders = "Cache-Control=" + cacheCtl;
-  var headers = querystring.parse(strHeaders);
-
-  // Add Authorisation headers for connecting to API Gateway
-  // t3step3 REPLACE CODE BELOW
-
-
-  // NOTE: include access token in Authorization header as "Bearer " (with space behind)
-    _.set(headers, "Authorization", "Bearer " + validToken);
-  // t3step3 END REPLACE CODE
-
-
-  console.log("\x1b[32m", "Request Header for Person API:", "\x1b[0m");
-  console.log(JSON.stringify(headers));
-
-  // invoke token API
-  var request = restClient.get(url);
-
-  // Set headers
-  if (!_.isUndefined(headers) && !_.isEmpty(headers))
-    request.set(headers);
-
-  // Set Params
-  if (!_.isUndefined(params) && !_.isEmpty(params))
-    request.query(params);
 
   // t2step6 END PASTE CODE
   return request;
