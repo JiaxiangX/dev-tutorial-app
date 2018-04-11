@@ -265,7 +265,7 @@ function createPersonRequest(uinfin, validToken) {
   var request = null;
   // assemble params for Person API
   // t2step6 PASTE CODE BELOW
-  ar strParams = "client_id=" + _clientId +
+  var strParams = "client_id=" + _clientId +
     "&attributes=" + _attributes;
   var params = querystring.parse(strParams);
 
