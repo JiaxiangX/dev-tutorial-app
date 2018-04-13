@@ -41,16 +41,11 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // A) Construct the Authorisation Token
   var defaultApexHeaders = {
     "apex_l2_eg_app_id": appId, // App ID assigned to your application
-    "apex_l2_eg_nonce": nonceValue, // unique random string
+    "apex_l2_eg_nonce": nonceValue, // secured random number
     "apex_l2_eg_signature_method": "SHA256withRSA",
     "apex_l2_eg_timestamp": timestamp, // Unix epoch time
     "apex_l2_eg_version": "1.0"
   };
-
-  // Remove params unless Content-Type is "application/x-www-form-urlencoded"
-  // if (method == "POST" && strContentType != "application/x-www-form-urlencoded") {
-  //   params = {};
-  // }
 
   // B) Forming the Signature Base String
 
@@ -65,7 +60,8 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   //myinfosgstg.api.gov.sg -> myinfosgstg.e.api.gov.sg
   url = _.replace(url, ".api.gov.sg", ".e.api.gov.sg");
 
-  // iii) concatenate request elements
+  // iii) concatenate request elements (HTTP method + url + base string parameters)
+  // Base String is a representation of the entire request (ensures message integrity)
   var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
 
   console.log("\x1b[32m", "Base String:");
@@ -84,7 +80,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
     .sign(signWith, 'base64');
 
   // D) Assembling the Header
-  var strApexHeader = "apex_l2_eg realm=\"" + realm +
+  var strApexHeader = "apex_l2_eg realm=\"" + realm + // Realm explanation to be added in
     "\",apex_l2_eg_timestamp=\"" + timestamp +
     "\",apex_l2_eg_nonce=\"" + nonceValue +
     "\",apex_l2_eg_app_id=\"" + appId +
