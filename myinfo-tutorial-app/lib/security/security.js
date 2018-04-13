@@ -10,19 +10,19 @@ var security = {};
 
 // Sorts a JSON object based on the key value in alphabetical order
 function sortJSON(json) {
-    if (_.isNil(json)) {
-        return json;
-    }
+  if (_.isNil(json)) {
+    return json;
+  }
 
-    var newJSON = {};
-    var keys = Object.keys(json);
-    keys.sort();
+  var newJSON = {};
+  var keys = Object.keys(json);
+  keys.sort();
 
-    for (key in keys) {
-        newJSON[keys[key]] = json[keys[key]];
-    }
+  for (key in keys) {
+    newJSON[keys[key]] = json[keys[key]];
+  }
 
-    return newJSON;
+  return newJSON;
 };
 
 /**
@@ -40,10 +40,10 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
 
   // A) Construct the Authorisation Token
   var defaultApexHeaders = {
-    "apex_l2_eg_app_id": appId,
-    "apex_l2_eg_nonce": nonceValue, // unique number
+    "apex_l2_eg_app_id": appId, // App ID assigned to your application
+    "apex_l2_eg_nonce": nonceValue, // unique random string
     "apex_l2_eg_signature_method": "SHA256withRSA",
-    "apex_l2_eg_timestamp": timestamp, // epoch timestamp
+    "apex_l2_eg_timestamp": timestamp, // Unix epoch time
     "apex_l2_eg_version": "1.0"
   };
 
@@ -80,14 +80,17 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
 
   // Load pem file containing the x509 cert & private key & sign the base string with it.
   var signature = crypto.createSign('RSA-SHA256')
-        .update(baseString)
-        .sign(signWith, 'base64');
+    .update(baseString)
+    .sign(signWith, 'base64');
 
-// arrange it so that the attributes are listed
   // D) Assembling the Header
-  var strApexHeader = "apex_l2_eg realm=\"" + realm + "\",apex_l2_eg_timestamp=\"" + timestamp +
-    "\",apex_l2_eg_nonce=\"" + nonceValue + "\",apex_l2_eg_app_id=\"" + appId +
-    "\",apex_l2_eg_signature_method=\"SHA256withRSA\",apex_l2_eg_version=\"1.0\",apex_l2_eg_signature=\"" + signature +
+  var strApexHeader = "apex_l2_eg realm=\"" + realm +
+    "\",apex_l2_eg_timestamp=\"" + timestamp +
+    "\",apex_l2_eg_nonce=\"" + nonceValue +
+    "\",apex_l2_eg_app_id=\"" + appId +
+    "\",apex_l2_eg_signature_method=\"SHA256withRSA\"" +
+    ",apex_l2_eg_version=\"1.0\"" +
+    ",apex_l2_eg_signature=\"" + signature +
     "\"";
 
   return strApexHeader;
@@ -101,25 +104,26 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
  * @param passphrase API Secret or certificate passphrase
  * @returns {string}
  */
-security.generateAuthorizationHeader = function (url, params, method, strContentType, authType, appId, keyCertContent, passphrase, realm) {
-    // NOTE: need to include the ".e." in order for the security authorisation header to work
-    // url = _.replace(url, ".api.gov.sg", ".e.api.gov.sg");
+security.generateAuthorizationHeader = function(url, params, method, strContentType, authType, appId, keyCertContent, passphrase, realm) {
 
-	if (authType == "L2") {
-        return generateSHA256withRSAHeader(url, params, method, strContentType, appId, keyCertContent, passphrase, realm);
-    } else {
-        return "";
-    }
+  if (authType == "L2") {
+    return generateSHA256withRSAHeader(url, params, method, strContentType, appId, keyCertContent, passphrase, realm);
+  } else {
+    return "";
+  }
 
 };
 
 
 // Verify & Decode JWS or JWT
-security.verifyJWS = function verifyJWS(jws, publicCert){
-	// verify token
-	// ignore notbefore check because it gives errors sometimes if the call is too fast.
-	var decoded = jwt.verify(jws, fs.readFileSync(publicCert, 'utf8'), { algorithms: ['RS256'], ignoreNotBefore:true });
-	return decoded;
+security.verifyJWS = function verifyJWS(jws, publicCert) {
+  // verify token
+  // ignore notbefore check because it gives errors sometimes if the call is too fast.
+  var decoded = jwt.verify(jws, fs.readFileSync(publicCert, 'utf8'), {
+    algorithms: ['RS256'],
+    ignoreNotBefore: true
+  });
+  return decoded;
 }
 
 

@@ -291,66 +291,6 @@ if (!_.isEmpty(authHeaders)) {
 
 Save or restart app
 
-#### Code Walkthrough - Signing Your Request
-Let's take a closer look at the `generateSHA256withRSAHeader()` function in `lib/security/security.js`
-
-```javascript
-function generateSHA256withRSAHeader(url, params, method, strContentType, appId, keyCertContent, keyCertPassphrase, realm) {
-  var nonceValue = nonce();
-  var timestamp = (new Date).getTime();
-
-  // A) Construct the Authorisation Token
-  var defaultApexHeaders = {
-    "apex_l2_eg_app_id": appId,
-    "apex_l2_eg_nonce": nonceValue,
-    "apex_l2_eg_signature_method": "SHA256withRSA",
-    "apex_l2_eg_timestamp": timestamp,
-    "apex_l2_eg_version": "1.0"
-  };
-
-  // Remove params unless Content-Type is "application/x-www-form-urlencoded"
-  if (method == "POST" && strContentType != "application/x-www-form-urlencoded") {
-    params = {};
-  }
-
-  // B) Forming the Signature Base String
-
-  // i) Normalize request parameters
-  var baseParams = sortJSON(_.merge(defaultApexHeaders, params));
-
-  var baseParamsStr = qs.stringify(baseParams);
-  baseParamsStr = qs.unescape(baseParamsStr);
-
-  // ii) construct request URL ---> url is passed in to this function
-
-  // iii) concatenate request elements
-  var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
-
-  console.log("\x1b[32m", "Base String:");
-  console.log("\x1b[0m", baseString);
-
-  // C) Signing Base String to get Digital Signature
-  var signWith = {
-    key: fs.readFileSync(keyCertContent, 'utf8')
-  };
-
-  if (!_.isUndefined(keyCertPassphrase) && !_.isEmpty(keyCertPassphrase)) _.set(signWith, "passphrase", keyCertPassphrase);
-
-  // Load pem file containing the x509 cert & private key & sign the base string with it.
-  var signature = crypto.createSign('RSA-SHA256')
-        .update(baseString)
-        .sign(signWith, 'base64');
-
-  // D) Assembling the Header
-  var strApexHeader = "apex_l2_eg realm=\"" + realm + "\",apex_l2_eg_timestamp=\"" + timestamp +
-    "\",apex_l2_eg_nonce=\"" + nonceValue + "\",apex_l2_eg_app_id=\"" + appId +
-    "\",apex_l2_eg_signature_method=\"SHA256withRSA\",apex_l2_eg_version=\"1.0\",apex_l2_eg_signature=\"" + signature +
-    "\"";
-
-  return strApexHeader;
-};
-```
-
 ### Step 3: Signing Person request
 Paste below codes to: `routes/index.js` - `t3step3`
 
