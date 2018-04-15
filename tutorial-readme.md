@@ -20,20 +20,24 @@ Try to invoke the API again by using the following UINFIN :
 
 MyInfo API Specs : [MyInfo Developer & Partner Portal](https://myinfo-api.app.gov.sg)
 
+# TUTORIAL 2
 
-# Getting Started
+
+## Getting Started
 1. Open cmd or terminal
 2. Change your directory to myinfo-tutorial-app root folder
-3. Run "npm install" (If you have not done so)
+3. Run "npm install -g nodemon" (If you have not done so)
+4. Run "npm install" (If you have not done so)
 
-# Login Credentials
+## To Start The Sample App
+Windows - `start.bat`
+
+Linux/Mac - `./start.sh`
+
+## Login Credentials
 
 UINFIN: S9812381D  
 Password: MyInfo2o15
-
-# TUTORIAL 2
-
-The online tutorial 2 is at: [https://myinfo-api.app.gov.sg/dev/tutorial2](https://myinfo-api.app.gov.sg/dev/tutorial2)
 
 ### Step 1: Function for calling Authorise API
 Paste below codes to: `views/html/index.html` - `t2step1`
@@ -50,6 +54,11 @@ window.location = authoriseUrl;
 ```
 
 Save or restart app
+
+### Login Credentials
+
+UINFIN: S9812381D  
+Password: MyInfo2o15
 
 ### Step 2: Call the Token API (with the authorisation code)
 Paste below codes to: `routes/index.js` - `t2step2`
@@ -87,8 +96,6 @@ request
     }
   });
 ```
-
-Save or restart app
 
 ### Step 3: function to prepare request for TOKEN API
 Paste below codes to: `routes/index.js` - `t2step3`
@@ -129,6 +136,10 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
 
 Save or restart app
 
+### Login Credentials
+
+UINFIN: S9812381D  
+Password: MyInfo2o15
 
 ### Step 4: validate and decode token to get UINFIN
 Paste below codes to: `routes/index.js` - `t2step4`
@@ -155,6 +166,11 @@ if (uinfin == undefined || uinfin == null) {
 ```
 
 Save or restart app
+
+### Login Credentials
+
+UINFIN: S9812381D  
+Password: MyInfo2o15
 
 ### Step 5: Call Person API using accessToken
 Paste below codes to: `routes/index.js` - `t2step5`
@@ -212,9 +228,6 @@ request
   });
 ```
 
-Save or restart app
-
-
 ### Step 6: function to prepare request for PERSON API
 Paste below codes to: `routes/index.js` - `t2step6`
 
@@ -252,6 +265,41 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
 ```
 
 Save or restart app
+
+### Login Credentials
+
+UINFIN: S9812381D  
+Password: MyInfo2o15
+
+
+### Step 7: function to fill the form with person data
+Paste below codes to: `views/html/index.html` - `t2step7`
+
+```javascript
+var formValues = {
+  "uinfin": data.uinfin,
+  "name": data.name.value,
+  "sex": data.sex.value,
+  "race": data.race.value,
+  "nationality": data.nationality.value,
+  "dob": data.dob.value,
+  "email": data.email.value,
+  "mobileno": toStr(data.mobileno, 'PHONENUMLOCAL'),
+  "regadd": toStr(data.regadd, 'ADDRESSLOCAL'),
+  "housingtype": toStr(data, 'HOUSINGTYPE'),
+  "marital": data.marital.value,
+  "edulevel": data.edulevel.value,
+  "assessableincome": toStr(data.assessableincome, 'MONEY'),
+};
+```
+
+Save or restart app
+
+### Login Credentials
+
+UINFIN: S9812381D  
+Password: MyInfo2o15
+
 
 # TUTORIAL 3
 
