@@ -39,7 +39,8 @@ var _tokenApiUrl = process.env.MYINFO_API_TOKEN;
 var _personApiUrl = process.env.MYINFO_API_PERSON;
 
 // Requested attributes
-var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome";
+var _attributes = "name,sex,race";
+// var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -90,24 +91,7 @@ function callPersonAPI(accessToken, res) {
   // t2step4 PASTE CODE BELOW
 
   // t2step4 END PASTE CODE
-  var decoded = securityHelper.verifyJWS(accessToken, _publicCertContent);
-  if (decoded == undefined || decoded == null) {
-    res.jsonp({
-      status: "ERROR",
-      msg: "INVALID TOKEN"
-    })
-  }
-
-  console.log("\x1b[32m", "Decoded Access Token:", "\x1b[0m");
-  console.log(JSON.stringify(decoded));
-
-  var uinfin = decoded.sub;
-  if (uinfin == undefined || uinfin == null) {
-    res.jsonp({
-      status: "ERROR",
-      msg: "UINFIN NOT FOUND"
-    });
-  }
+  
   // **** CALL PERSON API ****
   // Call Person API using accessToken
   // t2step5 PASTE CODE BELOW
