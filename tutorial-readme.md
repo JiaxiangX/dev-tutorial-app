@@ -4,9 +4,9 @@ The online tutorial 1 is at: [https://myinfo-api.app.gov.sg/dev/tutorial1](https
 
 ### Step 1: Invoke the Sandbox Person API
 
-Click on the URL link below,
+Copy the URL below.
 
-[https://myinfo.api.gov.sg/dev/L0/v1/person/S9203266C/](https://myinfo.api.gov.sg/dev/L0/v1/person/S9203266C/)
+`https://myinfo.api.gov.sg/dev/L0/v1/person/S9203266C/`
 
 
 `S9203266C` is the UINFIN (NRIC or FIN) parameter of the person.
@@ -34,10 +34,9 @@ Windows - `start.bat`
 
 Linux/Mac - `./start.sh`
 
-## Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 ### Step 1: Function for calling Authorise API
 Paste below codes to: `views/html/index.html` - `t2step1`
@@ -55,10 +54,9 @@ window.location = authoriseUrl;
 
 Save or restart app
 
-### Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 ### Step 2: Call the Token API (with the authorisation code)
 Paste below codes to: `routes/index.js` - `t2step2`
@@ -136,10 +134,9 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
 
 Save or restart app
 
-### Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 ### Step 4: validate and decode token to get UINFIN
 Paste below codes to: `routes/index.js` - `t2step4`
@@ -167,10 +164,9 @@ if (uinfin == undefined || uinfin == null) {
 
 Save or restart app
 
-### Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 ### Step 5: Call Person API using accessToken
 Paste below codes to: `routes/index.js` - `t2step5`
@@ -266,11 +262,9 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
 
 Save or restart app
 
-### Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
-
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 ### Step 7: function to fill the form with person data
 Paste below codes to: `views/html/index.html` - `t2step7`
@@ -295,10 +289,9 @@ var formValues = {
 
 Save or restart app
 
-### Login Credentials
-
-UINFIN: S9812381D  
-Password: MyInfo2o15
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
 
 
 # TUTORIAL 3
@@ -309,10 +302,11 @@ The online tutorial 3 is at: [https://myinfo-api.app.gov.sg/dev/tutorial3](https
 
 ### Step 1: Switching to Secured API
 
-Uncomment L2 APIs
-
 Linux/Mac OS - `start.sh`  
 Windows - `start.bat`
+
+Uncomment L2 APIs
+Comment L0 APIs
 
 Close and restart app
 
@@ -339,6 +333,10 @@ if (!_.isEmpty(authHeaders)) {
 
 Save or restart app
 
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
+
 ### Step 3: Signing Person request
 Paste below codes to: `routes/index.js` - `t3step3`
 
@@ -362,6 +360,11 @@ if (!_.isEmpty(authHeaders)) {
 
 Save or restart app
 
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
+
+
 ### Step 4: Decrypting JWE Response
 
 Copy below codes to replace codes at: routes/index.js - t3step4
@@ -383,3 +386,7 @@ if (personJWE == undefined || personJWE == null) {
   ```
 
   Save or restart app
+
+  #### Login Credentials
+  >UINFIN: S9812381D  
+  >Password: MyInfo2o15
