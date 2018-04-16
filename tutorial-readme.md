@@ -1,7 +1,5 @@
 # TUTORIAL 1
 
-The online tutorial 1 is at: [https://myinfo-api.app.gov.sg/dev/tutorial1](https://myinfo-api.app.gov.sg/dev/tutorial1)
-
 ### Step 1: Invoke the Sandbox Person API
 
 Copy the URL below.
@@ -68,6 +66,9 @@ request
   .end(function(callErr, callRes) {
     if (callErr) {
       // ERROR
+      console.log("\x1b[31m", "Error from Token API:", "\x1b[0m");
+      console.log(callErr.status);
+      console.log(callErr.response.req.res.text);
       res.jsonp({
         status: "ERROR",
         msg: callErr
@@ -112,7 +113,7 @@ var params = querystring.parse(strParams);
 var strHeaders = "Content-Type=" + contentType + "&Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
 
-// Add Authorisation headers for connecting to API Gateway
+// Sign request and add Authorization Headers
 // t3step2 PASTE CODE BELOW
 
 // t3step2 END PASTE CODE
@@ -179,6 +180,9 @@ request
   .buffer(true)
   .end(function(callErr, callRes) {
     if (callErr) {
+      console.log("\x1b[31m", "Error from Person API:", "\x1b[0m");
+      console.log(callErr.status);
+      console.log(callErr.response.req.res.text);
       res.jsonp({
         status: "ERROR",
         msg: callErr
@@ -236,7 +240,7 @@ var params = querystring.parse(strParams);
 var strHeaders = "Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
 
-// Add Authorisation headers for connecting to API Gateway
+// Sign request and add Authorization Headers
 // t3step3 REPLACE CODE BELOW
 
 
@@ -295,8 +299,6 @@ Save or restart app
 
 
 # TUTORIAL 3
-
-The online tutorial 3 is at: [https://myinfo-api.app.gov.sg/dev/tutorial3](https://myinfo-api.app.gov.sg/dev/tutorial3)
 
 >Tutorial 2 must be completed in order to proceed with Tutorial 3.
 
@@ -380,9 +382,9 @@ if (personJWE == undefined || personJWE == null) {
   console.log("\x1b[32m", "Person Data (JWE):", "\x1b[0m");
   console.log(personJWE);
 
-  var personData;
-  // Decrypt JWE to get the person data in JSON
-  personData = securityHelper.decryptJWE(personJWE, _privateKeyContent);
+  // header.encryptedKey.iv.ciphertext.tag
+  var jweParts = personJWE.split(".");
+  var personData = securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent);
   ```
 
   Save or restart app

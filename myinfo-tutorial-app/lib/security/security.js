@@ -5,6 +5,8 @@ const nonce = require('nonce')();
 const crypto = require('crypto');
 const qs = require('querystring');
 const jwt = require('jsonwebtoken');
+const jose = require('jose');
+const URLSafeBase64 = require('urlsafe-base64');
 
 var security = {};
 
@@ -64,8 +66,8 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // iii) concatenate request elements (HTTP method + url + base string parameters)
   var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
 
-  console.log("\x1b[32m", "Base String:");
-  console.log("\x1b[0m", baseString);
+  console.log("\x1b[32m", "Base String:", "\x1b[0m");
+  console.log(baseString);
 
   // C) Signing Base String to get Digital Signature
   var signWith = {
@@ -122,5 +124,23 @@ security.verifyJWS = function verifyJWS(jws, publicCert) {
   return decoded;
 }
 
+// Decrypt JWE
+security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, tag, privateKey) {
+  console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[40m\x1b[31m%s\x1b[37m%s\x1b[36m%s\x1b[37m%s\x1b[33m%s\x1b[37m%s\x1b[35m%s\x1b[37m%s\x1b[34m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
+  console.log("\x1b[40m\x1b[31m%s\x1b[37m%s\x1b[36m%s\x1b[37m%s\x1b[33m%s\x1b[37m%s\x1b[35m%s\x1b[37m%s\x1b[34m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
+  header = Buffer.from(header, 'ascii');
+  iv = URLSafeBase64.decode(iv);
+  cipherText = URLSafeBase64.decode(cipherText);
+  tag = Buffer.from(tag, "base64");
+
+  var keytoUnwrap = URLSafeBase64.decode(encryptedKey);
+  var rsa = new jose.jwa("RSA1_5");
+  var unEncryptedKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
+
+  var aes = new jose.jwa('A128CBC-HS256');
+  var plain = aes.decrypt(cipherText, tag, header, iv, unEncryptedKey);
+
+  return JSON.parse(plain);
+}
 
 module.exports = security;

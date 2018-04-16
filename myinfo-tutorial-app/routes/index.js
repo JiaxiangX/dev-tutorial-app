@@ -39,8 +39,8 @@ var _tokenApiUrl = process.env.MYINFO_API_TOKEN;
 var _personApiUrl = process.env.MYINFO_API_PERSON;
 
 // Requested attributes
-var _attributes = "name,sex,race";
-// var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome";
+// var _attributes = "name,sex,race";
+var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -91,7 +91,7 @@ function callPersonAPI(accessToken, res) {
   // t2step4 PASTE CODE BELOW
 
   // t2step4 END PASTE CODE
-  
+
   // **** CALL PERSON API ****
   // Call Person API using accessToken
   // t2step5 PASTE CODE BELOW
