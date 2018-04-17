@@ -40,7 +40,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   var nonceValue = nonce();
   var timestamp = (new Date).getTime();
 
-  // A) Construct the Authorisation Token
+  // A) Construct the Authorisation Token Parameters
   var defaultApexHeaders = {
     "apex_l2_eg_app_id": appId, // App ID assigned to your application
     "apex_l2_eg_nonce": nonceValue, // secure random number
@@ -49,7 +49,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
     "apex_l2_eg_version": "1.0"
   };
 
-  // B) Forming the Signature Base String
+  // B) Forming the Base String
   // Base String is a representation of the entire request (ensures message integrity)
 
   // i) Normalize request parameters
@@ -82,7 +82,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
     .sign(signWith, 'base64');
 
   // D) Assembling the Header
-  var strApexHeader = "apex_l2_eg realm=\"" + realm + // Authentication Realm
+  var strApexHeader = "apex_l2_eg realm=\"" + realm + // www-Authentication Realm
     "\",apex_l2_eg_timestamp=\"" + timestamp +
     "\",apex_l2_eg_nonce=\"" + nonceValue +
     "\",apex_l2_eg_app_id=\"" + appId +
@@ -135,19 +135,20 @@ security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, 
   console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
   console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
   try {
-    header = Buffer.from(header, 'ascii'); // header contains the algorithms
-    iv = URLSafeBase64.decode(iv); // initialisation vector
+    var aad = Buffer.from(header, 'ascii'); // Additional Authentication Data (aad) - ensures integrity of cipherText
+    header = JSON.parse(URLSafeBase64.decode(header)); // header contains the algorithms
+    iv = URLSafeBase64.decode(iv); // initialisation vector - secure random value
     cipherText = URLSafeBase64.decode(cipherText); // encrypted payload
-    tag = Buffer.from(tag, "base64"); // authentication tag
+    tag = Buffer.from(tag, "base64"); // authentication tag - ensures integrity of cipherText and aad
+    var keytoUnwrap = URLSafeBase64.decode(encryptedKey); // base64 decode encryptedKey
 
-    var keytoUnwrap = URLSafeBase64.decode(encryptedKey); // base64 decode encrypted key
-    var rsa = new jose.jwa("RSA1_5"); // specify algorithm for encryptedKey
-    // => decrypt encryptedKey
-    var unEncryptedKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
+    var rsa = new jose.jwa(header.alg); // specify algorithm for encryptedKey ("RSA1_5")
+    // => decrypt encryptedKey to get Content Encryption Key (CEK)
+    var contentEncryptionKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
 
-    var aes = new jose.jwa('A128CBC-HS256'); // specify algorithm for cipherText
-    // => decrypt cipherText using unEncryptedKey + iv, and validates against tag
-    var plain = aes.decrypt(cipherText, tag, header, iv, unEncryptedKey);
+    var aes = new jose.jwa(header.enc); // specify algorithm for cipherText ("A128CBC-HS256")
+    // => decrypt cipherText using contentEncryptionKey + iv, and validates against tag
+    var plain = aes.decrypt(cipherText, tag, aad, iv, contentEncryptionKey);
 
     return JSON.parse(plain);
   }
