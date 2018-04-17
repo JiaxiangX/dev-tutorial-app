@@ -83,7 +83,7 @@
 .markdown-preview[data-use-github-style] span.float-left span { margin: 13px 0px 0px; }
 .markdown-preview[data-use-github-style] span.float-right { display: block; float: right; margin-left: 13px; overflow: hidden; }
 .markdown-preview[data-use-github-style] span.float-right > span { display: block; margin: 13px auto 0px; overflow: hidden; text-align: right; }
-.markdown-preview[data-use-github-style] code, .markdown-preview[data-use-github-style] tt { padding: 0.2em 0px; margin: 0px; font-size: 85%; background-color: rgba(0, 0, 0, 0.0392157); border-radius: 3px; }
+.markdown-preview[data-use-github-style] code, .markdown-preview[data-use-github-style] tt { padding: 0.2em 0px; margin: 0px; font-size: 85%; background-color: rgba(0, 0, 0, 0.04); border-radius: 3px; }
 .markdown-preview[data-use-github-style] code::before, .markdown-preview[data-use-github-style] tt::before, .markdown-preview[data-use-github-style] code::after, .markdown-preview[data-use-github-style] tt::after { letter-spacing: -0.2em; content: " "; }
 .markdown-preview[data-use-github-style] code br, .markdown-preview[data-use-github-style] tt br { display: none; }
 .markdown-preview[data-use-github-style] del code { text-decoration: inherit; }
@@ -105,8 +105,9 @@
   border-bottom: 1px dotted lime;
   position: absolute;
 }
-.line-number.bracket-matcher {
-  background-color: #777;
+.line-number.bracket-matcher.bracket-matcher {
+  color: #383a42;
+  background-color: #e5e5e6;
 }
 
 .spell-check-misspelling .region {
@@ -164,7 +165,7 @@ pre.editor-colors .gutter .line-number {
 }
 pre.editor-colors .gutter .line-number.cursor-line {
   color: #383a42;
-  background-color: #f2f2f2;
+  background-color: #e5e5e6;
 }
 pre.editor-colors .gutter .line-number.cursor-line-no-selection {
   background-color: transparent;
@@ -608,8 +609,7 @@ pre.editor-colors .fold-marker:after {
 <h1 id="tutorial-3">TUTORIAL 3</h1>
 <h3 id="step-1-switching-to-secured-api">Step 1: Switching to Secured API</h3>
 <p>Linux/Mac OS - <code>start.sh</code><br>Windows - <code>start.bat</code></p>
-<p>Uncomment L2 APIs
-Comment L0 APIs</p>
+<p>Uncomment L2 APIs<br>Comment L0 APIs</p>
 <p>Close and restart app</p>
 <h4 id="login-credentials">Login Credentials</h4>
 <blockquote>
