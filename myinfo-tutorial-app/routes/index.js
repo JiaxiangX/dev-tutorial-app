@@ -39,8 +39,7 @@ var _tokenApiUrl = process.env.MYINFO_API_TOKEN;
 var _personApiUrl = process.env.MYINFO_API_PERSON;
 
 // Requested attributes
-// var _attributes = "name,sex,race";
-var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome";
+var _attributes = "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
