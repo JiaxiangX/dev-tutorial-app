@@ -114,9 +114,9 @@ var strHeaders = "Content-Type=" + contentType + "&Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
 
 // Sign request and add Authorization Headers
-// t3step2 PASTE CODE BELOW
+// t3step2a PASTE CODE BELOW
 
-// t3step2 END PASTE CODE
+// t3step2a END PASTE CODE
 
 
 console.log("\x1b[32m", "Request Header for Token API:", "\x1b[0m");
@@ -193,7 +193,7 @@ request
         body: callRes.body,
         text: callRes.text
       };
-      // t3step4 REPLACE CODE BELOW
+      // t3step3 REPLACE CODE BELOW
       var personJWS = data.text;
       if (personJWS == undefined || personJWS == null) {
         res.jsonp({
@@ -201,13 +201,13 @@ request
           msg: "PERSON DATA NOT FOUND"
         });
       } else {
-        console.log("\x1b[32m", "Person Data (JWS):", "\x1b[0m");
+        console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
         console.log(personJWS);
 
         var personData;
         // verify signature & decode JWS to get the person data in JSON
         personData = securityHelper.verifyJWS(personJWS, _publicCertContent);
-      // t3step4 END REPLACE CODE
+      // t3step3 END REPLACE CODE
 
         if (personData == undefined || personData == null)
           res.jsonp({
@@ -216,7 +216,7 @@ request
           });
         personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
-        console.log("\x1b[32m", "Person Data (Decoded):", "\x1b[0m");
+        console.log("\x1b[32m", "Person Data (Decoded/Decrypted):", "\x1b[0m");
         console.log(JSON.stringify(personData));
         // successful. return data back to frontend
         res.jsonp({
@@ -241,12 +241,12 @@ var strHeaders = "Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
 
 // Sign request and add Authorization Headers
-// t3step3 REPLACE CODE BELOW
+// t3step2b REPLACE CODE BELOW
 
 
 // NOTE: include access token in Authorization header as "Bearer " (with space behind)
   _.set(headers, "Authorization", "Bearer " + validToken);
-// t3step3 END REPLACE CODE
+// t3step2b END REPLACE CODE
 
 
 console.log("\x1b[32m", "Request Header for Person API:", "\x1b[0m");
@@ -300,8 +300,6 @@ Save or restart app
 
 # TUTORIAL 3
 
->Tutorial 2 must be completed in order to proceed with Tutorial 3.
-
 ### Step 1: Switching to Secured API
 
 Linux/Mac OS - `start.sh`  
@@ -312,8 +310,15 @@ Comment L0 APIs
 
 Close and restart app
 
-### Step 2: Signing Token request
-Paste below codes to: `routes/index.js` - `t3step2`
+#### Login Credentials
+>UINFIN: S9812381D  
+>Password: MyInfo2o15
+
+### Step 2: Signing Token & Person request
+
+##### a) Signing the Token Request
+
+Paste below codes to: `routes/index.js` - `t3step2a`
 
 ```javascript
 var authHeaders = securityHelper.generateAuthorizationHeader(
@@ -332,15 +337,8 @@ if (!_.isEmpty(authHeaders)) {
   _.set(headers, "Authorization", authHeaders);
 }
 ```
-
-Save or restart app
-
-#### Login Credentials
->UINFIN: S9812381D  
->Password: MyInfo2o15
-
-### Step 3: Signing Person request
-Paste below codes to: `routes/index.js` - `t3step3`
+###### b) Signing the Person Request
+Paste below codes to: `routes/index.js` - `t3step2b`
 
 ```javascript
 var authHeaders = securityHelper.generateAuthorizationHeader(
@@ -367,9 +365,9 @@ Save or restart app
 >Password: MyInfo2o15
 
 
-### Step 4: Decrypting JWE Response
+### Step 3: Decrypting JWE Response
 
-Copy below codes to replace codes at: routes/index.js - t3step4
+Copy below codes to replace codes at: routes/index.js - t3step3
 
 ```javascript
 var personJWE = data.text;
@@ -379,7 +377,7 @@ if (personJWE == undefined || personJWE == null) {
     msg: "PERSON DATA NOT FOUND"
   });
 } else {
-  console.log("\x1b[32m", "Person Data (JWE):", "\x1b[0m");
+  console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
   console.log(personJWE);
 
   // header.encryptedKey.iv.ciphertext.tag

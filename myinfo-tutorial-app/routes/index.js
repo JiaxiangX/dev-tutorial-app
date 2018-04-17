@@ -102,6 +102,9 @@ function callPersonAPI(accessToken, res) {
 
 // function to prepare request for TOKEN API
 function createTokenRequest(code) {
+  console.log("\x1b[32m%s\x1b[0m", "******************************");
+  console.log("\x1b[32m%s\x1b[0m", "**** Create Token Request ****");
+  console.log("\x1b[32m%s\x1b[0m", "******************************");
   var cacheCtl = "no-cache";
   var contentType = "application/x-www-form-urlencoded";
   var method = "POST";
@@ -112,11 +115,15 @@ function createTokenRequest(code) {
 
   // t2step3 END PASTE CODE
 
+  console.log("\x1b[32m%s\x1b[0m", "Sending Token Request >>>");
   return request;
 }
 
 // function to prepare request for PERSON API
 function createPersonRequest(uinfin, validToken) {
+  console.log("\x1b[32m%s\x1b[0m", "******************************");
+  console.log("\x1b[32m%s\x1b[0m", "**** Create Person Request ***");
+  console.log("\x1b[32m%s\x1b[0m", "******************************");
   var url = _personApiUrl + "/" + uinfin + "/";
   var cacheCtl = "no-cache";
   var method = "GET";
@@ -125,6 +132,7 @@ function createPersonRequest(uinfin, validToken) {
   // t2step6 PASTE CODE BELOW
 
   // t2step6 END PASTE CODE
+  console.log("\x1b[32m%s\x1b[0m", "Sending Person Request >>>");
   return request;
 }
 

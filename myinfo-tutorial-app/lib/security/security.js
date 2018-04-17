@@ -117,30 +117,42 @@ security.generateAuthorizationHeader = function(url, params, method, strContentT
 security.verifyJWS = function verifyJWS(jws, publicCert) {
   // verify token
   // ignore notbefore check because it gives errors sometimes if the call is too fast.
-  var decoded = jwt.verify(jws, fs.readFileSync(publicCert, 'utf8'), {
-    algorithms: ['RS256'],
-    ignoreNotBefore: true
-  });
-  return decoded;
+  try {
+    var decoded = jwt.verify(jws, fs.readFileSync(publicCert, 'utf8'), {
+      algorithms: ['RS256'],
+      ignoreNotBefore: true
+    });
+    return decoded;
+  }
+  catch(error) {
+    console.error("\x1b[31mError with verifying and decoding JWS:\x1b[0m %s", error);
+    throw("Error with verifying and decoding JWS");
+  }
 }
 
 // Decrypt JWE
 security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, tag, privateKey) {
-  console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[40m\x1b[31m%s\x1b[37m%s\x1b[36m%s\x1b[37m%s\x1b[33m%s\x1b[37m%s\x1b[35m%s\x1b[37m%s\x1b[34m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
-  console.log("\x1b[40m\x1b[31m%s\x1b[37m%s\x1b[36m%s\x1b[37m%s\x1b[33m%s\x1b[37m%s\x1b[35m%s\x1b[37m%s\x1b[34m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
-  header = Buffer.from(header, 'ascii');
-  iv = URLSafeBase64.decode(iv);
-  cipherText = URLSafeBase64.decode(cipherText);
-  tag = Buffer.from(tag, "base64");
+  console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
+  console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
+  try {
+    header = Buffer.from(header, 'ascii');
+    iv = URLSafeBase64.decode(iv);
+    cipherText = URLSafeBase64.decode(cipherText);
+    tag = Buffer.from(tag, "base64");
 
-  var keytoUnwrap = URLSafeBase64.decode(encryptedKey);
-  var rsa = new jose.jwa("RSA1_5");
-  var unEncryptedKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
+    var keytoUnwrap = URLSafeBase64.decode(encryptedKey);
+    var rsa = new jose.jwa("RSA1_5");
+    var unEncryptedKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
 
-  var aes = new jose.jwa('A128CBC-HS256');
-  var plain = aes.decrypt(cipherText, tag, header, iv, unEncryptedKey);
+    var aes = new jose.jwa('A128CBC-HS256');
+    var plain = aes.decrypt(cipherText, tag, header, iv, unEncryptedKey);
 
-  return JSON.parse(plain);
+    return JSON.parse(plain);
+  }
+  catch(error) {
+    console.error("\x1b[31mError with decrypting JWE:\x1b[0m %s", error);
+    throw("Error with decrypting JWE");
+  }
 }
 
 module.exports = security;
