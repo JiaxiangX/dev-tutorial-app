@@ -135,16 +135,18 @@ security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, 
   console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
   console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
   try {
-    header = Buffer.from(header, 'ascii');
-    iv = URLSafeBase64.decode(iv);
-    cipherText = URLSafeBase64.decode(cipherText);
-    tag = Buffer.from(tag, "base64");
+    header = Buffer.from(header, 'ascii'); // header contains the algorithms
+    iv = URLSafeBase64.decode(iv); // initialisation vector
+    cipherText = URLSafeBase64.decode(cipherText); // encrypted payload
+    tag = Buffer.from(tag, "base64"); // authentication tag
 
-    var keytoUnwrap = URLSafeBase64.decode(encryptedKey);
-    var rsa = new jose.jwa("RSA1_5");
+    var keytoUnwrap = URLSafeBase64.decode(encryptedKey); // base64 decode encrypted key
+    var rsa = new jose.jwa("RSA1_5"); // specify algorithm for encryptedKey
+    // => decrypt encryptedKey
     var unEncryptedKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
 
-    var aes = new jose.jwa('A128CBC-HS256');
+    var aes = new jose.jwa('A128CBC-HS256'); // specify algorithm for cipherText
+    // => decrypt cipherText using unEncryptedKey + iv, and validates against tag
     var plain = aes.decrypt(cipherText, tag, header, iv, unEncryptedKey);
 
     return JSON.parse(plain);
