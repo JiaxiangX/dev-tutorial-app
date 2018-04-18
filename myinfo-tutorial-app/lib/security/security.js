@@ -133,15 +133,15 @@ security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, 
   console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
   console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
   try {
-    // Additional Authentication Data (aad) - ensures integrity of cipherText
+    // aad (Additional Authentication Data) - ensures integrity of cipherText
     var aad = Buffer.from(header, 'ascii');
-    // header contains the algorithms
+    // header contains the encryption algorithms
     header = JSON.parse(URLSafeBase64.decode(header));
-    // initialisation vector - secure random value
+    // iv (Initialisation Vector) - secure random value
     iv = URLSafeBase64.decode(iv);
-    // encrypted payload
+    // cipherText - encrypted payload
     cipherText = URLSafeBase64.decode(cipherText);
-    // authentication tag - ensures integrity of cipherText and aad
+    // tag - ensures integrity of cipherText and aad
     tag = Buffer.from(tag, "base64");
     // encryptedKey contains CEK (Content Encryption Key)
     encryptedKey = URLSafeBase64.decode(encryptedKey);
