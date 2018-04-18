@@ -32,10 +32,6 @@ Windows - `start.bat`
 
 Linux/Mac - `./start.sh`
 
-#### Login Credentials
->UINFIN: S9812381D  
->Password: MyInfo2o15
-
 ### Step 1: Function for calling Authorise API
 Paste below codes to: `views/html/index.html` - `t2step1`
 
