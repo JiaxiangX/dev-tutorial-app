@@ -299,15 +299,17 @@ Save or restart app
 
 # TUTORIAL 3
 
-### Step 1: Switching to Secured API
+### Step 1: Switching to Secured APIs
 
-Linux/Mac OS - `start.sh`  
-Windows - `start.bat`
+1. open config file
+a. Linux/Mac OS - `start.sh`  
+b. Windows - `start.bat`
 
-Uncomment L2 APIs
-Comment L0 APIs
+2. Uncomment L2 APIs
 
-Close and restart app
+3. Comment L0 APIs
+
+4. Close and restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -366,7 +368,7 @@ Save or restart app
 
 ### Step 3: Decrypting JWE Response
 
-Copy below codes to replace codes at: routes/index.js - t3step3
+Paste below codes to: routes/index.js - t3step3
 
 ```javascript
 var personJWE = data.text;

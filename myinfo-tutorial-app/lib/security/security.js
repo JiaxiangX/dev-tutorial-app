@@ -72,17 +72,15 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // C) Signing Base String to get Digital Signature
   var signWith = {
     key: fs.readFileSync(keyCertContent, 'utf8')
-  };
+  }; // Provides private key
 
-  if (!_.isUndefined(keyCertPassphrase) && !_.isEmpty(keyCertPassphrase)) _.set(signWith, "passphrase", keyCertPassphrase);
-
-  // Load pem file containing the x509 cert & private key & sign the base string with it.
+  // Load pem file containing the x509 cert & private key & sign the base string with it to produce the Digital Signature
   var signature = crypto.createSign('RSA-SHA256')
     .update(baseString)
     .sign(signWith, 'base64');
 
-  // D) Assembling the Header
-  var strApexHeader = "apex_l2_eg realm=\"" + realm + // www-Authentication Realm
+  // D) Assembling the Authorization Header
+  var strApexHeader = "apex_l2_eg realm=\"" + realm + // Defaults to 1st part of incoming request hostname
     "\",apex_l2_eg_timestamp=\"" + timestamp +
     "\",apex_l2_eg_nonce=\"" + nonceValue +
     "\",apex_l2_eg_app_id=\"" + appId +
@@ -130,24 +128,32 @@ security.verifyJWS = function verifyJWS(jws, publicCert) {
   }
 }
 
-// Decrypt JWE
+// Decrypt JWE using private key
 security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, tag, privateKey) {
   console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
   console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
   try {
-    var aad = Buffer.from(header, 'ascii'); // Additional Authentication Data (aad) - ensures integrity of cipherText
-    header = JSON.parse(URLSafeBase64.decode(header)); // header contains the algorithms
-    iv = URLSafeBase64.decode(iv); // initialisation vector - secure random value
-    cipherText = URLSafeBase64.decode(cipherText); // encrypted payload
-    tag = Buffer.from(tag, "base64"); // authentication tag - ensures integrity of cipherText and aad
-    var keytoUnwrap = URLSafeBase64.decode(encryptedKey); // base64 decode encryptedKey
+    // Additional Authentication Data (aad) - ensures integrity of cipherText
+    var aad = Buffer.from(header, 'ascii');
+    // header contains the algorithms
+    header = JSON.parse(URLSafeBase64.decode(header));
+    // initialisation vector - secure random value
+    iv = URLSafeBase64.decode(iv);
+    // encrypted payload
+    cipherText = URLSafeBase64.decode(cipherText);
+    // authentication tag - ensures integrity of cipherText and aad
+    tag = Buffer.from(tag, "base64");
+    // encryptedKey contains CEK (Content Encryption Key)
+    encryptedKey = URLSafeBase64.decode(encryptedKey);
 
-    var rsa = new jose.jwa(header.alg); // specify algorithm for encryptedKey ("RSA1_5")
-    // => decrypt encryptedKey to get Content Encryption Key (CEK)
-    var contentEncryptionKey = rsa.unwrapKey(keytoUnwrap, fs.readFileSync(privateKey, 'utf8'));
+    // specify algorithm for encryptedKey ("RSA1_5")
+    var rsa = new jose.jwa(header.alg);
+    // => decrypt encryptedKey using private key, to get CEK (Content Encryption Key)
+    var contentEncryptionKey = rsa.unwrapKey(encryptedKey, fs.readFileSync(privateKey, 'utf8'));
 
-    var aes = new jose.jwa(header.enc); // specify algorithm for cipherText ("A128CBC-HS256")
-    // => decrypt cipherText using contentEncryptionKey + iv, and validates against tag
+    // specify algorithm for cipherText ("A128CBC-HS256")
+    var aes = new jose.jwa(header.enc);
+    // => decrypt cipherText using contentEncryptionKey + iv, and validates against aad & tag
     var plain = aes.decrypt(cipherText, tag, aad, iv, contentEncryptionKey);
 
     return JSON.parse(plain);
