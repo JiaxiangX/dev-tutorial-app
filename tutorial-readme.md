@@ -1,14 +1,13 @@
 # MyInfo Tutorial App Setup
 
-### Ensure Nodejs and npm are installed
+### Install Nodejs and npm
 
-If you've yet to install Nodejs or npm, please use this link [nodejs installation page](https://nodejs.org/en/download/)
-Nodejs installation:
+If you've yet to install Nodejs or npm, please use this [link](https://nodejs.org/en/download/)
 
 If you have both Nodejs installed, please ensure Nodejs version is at least v6. Check using `node -v` command.
 
 
-### Ensure nodemon is installed
+### Install nodemon
 Open terminal or command prompt, and run following command:
 ```
 npm install -g nodemon
@@ -348,12 +347,9 @@ Save or restart app
 1. open config file
 a. Linux/Mac OS - `start.sh`  
 b. Windows - `start.bat`
-
 2. Uncomment L2 APIs
-
 3. Comment L0 APIs
-
-4. Close and restart app
+4. Save, close and restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
