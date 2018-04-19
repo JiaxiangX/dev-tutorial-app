@@ -1,6 +1,6 @@
 # MyInfo Tutorial App Setup
 
-### Ensure nodejs and npm are installed
+### Ensure Nodejs and npm are installed
 
 If you've yet to install Nodejs or npm, please use this link [nodejs installation page](https://nodejs.org/en/download/)
 Nodejs installation:
@@ -14,13 +14,16 @@ Open terminal or command prompt, and run following command:
 npm install -g nodemon
 ```
 
-### Install tutorial app dependencies
+### Install Tutorial App dependencies
 Access the downloaded tutorial material and navigate to myinfo-tutorial-app, then run the following command:
 ```
 npm install
 ```
 
-### Start tutorial app
+### Import Tutorial App to IDE
+Import myinfo-tutorial-app folder to IDE of choice
+
+### Start Tutorial App
 For Linux/MacOS
 Execute the following command to start the application:
 ```
