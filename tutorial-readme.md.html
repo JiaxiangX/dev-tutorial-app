@@ -533,7 +533,23 @@ pre.editor-colors .fold-marker:after {
 }
 </style>
   </head>
-  <body class='markdown-preview' data-use-github-style><h1 id="tutorial-1">TUTORIAL 1</h1>
+  <body class='markdown-preview' data-use-github-style><h1 id="myinfo-tutorial-app-setup">MyInfo Tutorial App Setup</h1>
+<h4 id="ensure-nodejs-and-npm-are-installed">Ensure nodejs and npm are installed</h4>
+<p>If you've yet to install Nodejs or npm, please use this link <a href="https://nodejs.org/en/download/">nodejs installation page</a><br>Nodejs installation:</p>
+<p>If you have both Nodejs installed, please ensure Nodejs version is at least v6. Check using <code>node -v</code> command.</p>
+<h4 id="ensure-nodemon-is-installed">Ensure nodemon is installed</h4>
+<p>Open terminal or command prompt, and run following command:</p>
+<pre class="editor-colors lang-"><div class="line"><span class="syntax--text syntax--plain syntax--null-grammar"><span>npm&nbsp;install&nbsp;-g&nbsp;nodemon</span></span></div></pre><h4 id="install-tutorial-app-dependencies">Install tutorial app dependencies</h4>
+<p>Access the downloaded tutorial material and navigate to myinfo-tutorial-app, then run the following command:</p>
+<pre class="editor-colors lang-"><div class="line"><span class="syntax--text syntax--plain syntax--null-grammar"><span>npm&nbsp;install</span></span></div></pre><h4 id="start-tutorial-app">Start tutorial app</h4>
+<p>For Linux/MacOS<br>Execute the following command to start the application:</p>
+<pre class="editor-colors lang-"><div class="line"><span class="syntax--text syntax--plain syntax--null-grammar"><span>./start.sh</span></span></div></pre><p>For Windows<br>Execute the following command to start the application:</p>
+<pre class="editor-colors lang-"><div class="line"><span class="syntax--text syntax--plain syntax--null-grammar"><span>start.bat</span></span></div></pre><h4 id="access-tutorial-app-landing-page">Access Tutorial App Landing Page</h4>
+<p>Access the following URL <code>http://localhost:3001</code> from your browser</p>
+<p><img alt="myinfo-tutorial-app" src="/Users/jasonzheng/GovTech/dev-tutorial-app/myinfo-tutorial-app-landing.jpg"></p>
+<p>If you see the page above, it means your setup is complete and you are ready for the tutorial!</p>
+<p>If you can't see this page, please raise your hand so that the facilitators can come over to guide you.</p>
+<h1 id="tutorial-1">TUTORIAL 1</h1>
 <h3 id="step-1-invoke-the-sandbox-person-api">Step 1: Invoke the Sandbox Person API</h3>
 <p>Copy the URL below.</p>
 <p><code>https://myinfo.api.gov.sg/dev/L0/v1/person/S9203266C/</code></p>
@@ -544,7 +560,7 @@ pre.editor-colors .fold-marker:after {
 <li>S5062854Z</li>
 <li>T0066846F</li>
 </ul>
-<p>MyInfo API Specs : <a target="_blank" href="https://myinfo-api.app.gov.sg">MyInfo Developer &amp; Partner Portal</a></p>
+<p>MyInfo API Specs : <a href="https://myinfo-api.app.gov.sg">MyInfo Developer &amp; Partner Portal</a></p>
 <h1 id="tutorial-2">TUTORIAL 2</h1>
 <h2 id="getting-started">Getting Started</h2>
 <ol>
@@ -556,10 +572,6 @@ pre.editor-colors .fold-marker:after {
 <h2 id="to-start-the-sample-app">To Start The Sample App</h2>
 <p>Windows - <code>start.bat</code></p>
 <p>Linux/Mac - <code>./start.sh</code></p>
-<h4 id="login-credentials">Login Credentials</h4>
-<blockquote>
-<p>UINFIN: S9812381D<br>Password: MyInfo2o15</p>
-</blockquote>
 <h3 id="step-1-function-for-calling-authorise-api">Step 1: Function for calling Authorise API</h3>
 <p>Paste below codes to: <code>views/html/index.html</code> - <code>t2step1</code></p>
 <pre class="editor-colors lang-javascript"><div class="line"><span class="syntax--source syntax--js"><span class="syntax--storage syntax--type syntax--var syntax--js"><span>var</span></span><span>&nbsp;authoriseUrl&nbsp;</span><span class="syntax--keyword syntax--operator syntax--assignment syntax--js"><span>=</span></span><span>&nbsp;authApiUrl&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;&nbsp;</span><span class="syntax--string syntax--quoted syntax--double syntax--js"><span class="syntax--punctuation syntax--definition syntax--string syntax--begin syntax--js"><span>"</span></span><span>?client_id=</span><span class="syntax--punctuation syntax--definition syntax--string syntax--end syntax--js"><span>"</span></span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span><span>&nbsp;clientId&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;&nbsp;</span><span class="syntax--string syntax--quoted syntax--double syntax--js"><span class="syntax--punctuation syntax--definition syntax--string syntax--begin syntax--js"><span>"</span></span><span>&amp;attributes=</span><span class="syntax--punctuation syntax--definition syntax--string syntax--end syntax--js"><span>"</span></span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span><span>&nbsp;attributes&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;&nbsp;</span><span class="syntax--string syntax--quoted syntax--double syntax--js"><span class="syntax--punctuation syntax--definition syntax--string syntax--begin syntax--js"><span>"</span></span><span>&amp;purpose=</span><span class="syntax--punctuation syntax--definition syntax--string syntax--end syntax--js"><span>"</span></span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span><span>&nbsp;purpose&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;&nbsp;</span><span class="syntax--string syntax--quoted syntax--double syntax--js"><span class="syntax--punctuation syntax--definition syntax--string syntax--begin syntax--js"><span>"</span></span><span>&amp;state=</span><span class="syntax--punctuation syntax--definition syntax--string syntax--end syntax--js"><span>"</span></span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span><span>&nbsp;state&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;&nbsp;</span><span class="syntax--string syntax--quoted syntax--double syntax--js"><span class="syntax--punctuation syntax--definition syntax--string syntax--begin syntax--js"><span>"</span></span><span>&amp;redirect_uri=</span><span class="syntax--punctuation syntax--definition syntax--string syntax--end syntax--js"><span>"</span></span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--js"><span>+</span></span><span>&nbsp;redirectUrl</span><span class="syntax--punctuation syntax--terminator syntax--statement syntax--js"><span>;</span></span></span></div><div class="line"><span class="syntax--source syntax--js"><span>&nbsp;</span></span></div><div class="line"><span class="syntax--source syntax--js"><span class="syntax--support syntax--variable syntax--dom syntax--js"><span>window</span></span><span class="syntax--meta syntax--delimiter syntax--property syntax--period syntax--js"><span>.</span></span><span class="syntax--support syntax--variable syntax--property syntax--dom syntax--js"><span>location</span></span><span>&nbsp;</span><span class="syntax--keyword syntax--operator syntax--assignment syntax--js"><span>=</span></span><span>&nbsp;authoriseUrl</span><span class="syntax--punctuation syntax--terminator syntax--statement syntax--js"><span>;</span></span></span></div></pre>
