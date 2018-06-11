@@ -164,7 +164,7 @@ function callPersonAPI(accessToken, res) {
           body: callRes.body,
           text: callRes.text
         };
-        // t3step3 REPLACE CODE BELOW
+
         var personData = data.text;
         if (personData == undefined || personData == null) {
           res.jsonp({
@@ -173,21 +173,11 @@ function callPersonAPI(accessToken, res) {
           });
         }
         else {
-
           if (_authLevel == "L0") {
-            console.log("Person Data (JWS):".green);
-            console.log(personData);
-            personData = securityHelper.verifyJWS(personData, _publicCertContent);
-
-            if (personData == undefined || personData == null) {
-              res.jsonp({
-                status: "ERROR",
-                msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-              });
-            }
+            personData = JSON.parse(personData);
             personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
-            console.log("Person Data (Decoded):".green);
+            console.log("Person Data :".green);
             console.log(JSON.stringify(personData));
             // successful. return data back to frontend
             res.jsonp({
@@ -196,13 +186,14 @@ function callPersonAPI(accessToken, res) {
             });
 
           }
+          //t3step3 PASTE CODE BELOW
           else if (_authLevel == "L2") {
             console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
             console.log(personData);
 
             // header.encryptedKey.iv.ciphertext.tag
             var jweParts = personData.split(".");
-          // t3step3 END REPLACE CODE
+
             securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent)
               .then(personData => {
                 if (personData == undefined || personData == null)
@@ -224,6 +215,7 @@ function callPersonAPI(accessToken, res) {
                 console.error("Error with decrypting JWE: %s".red, error);
               })
           }
+          //t3step3 END PASTE CODE
           else {
             throw new Error("Unknown Auth Level");
           }
@@ -318,7 +310,7 @@ function createPersonRequest(uinfin, validToken) {
   var headers = querystring.parse(strHeaders);
 
   // Sign request and add Authorization Headers
-  // t3step2b REPLACE CODE BELOW
+  // t3step2b PASTE CODE BELOW
 
   var authHeaders = securityHelper.generateAuthorizationHeader(
     url,
@@ -331,7 +323,7 @@ function createPersonRequest(uinfin, validToken) {
     _clientSecret,
     _realm
   );
-  // t3step2b END REPLACE CODE
+  // t3step2b END PASTE CODE
   if (!_.isEmpty(authHeaders)) {
     _.set(headers, "Authorization", authHeaders + ",Bearer " + validToken);
   }

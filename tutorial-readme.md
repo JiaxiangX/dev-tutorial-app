@@ -236,39 +236,37 @@ request
         body: callRes.body,
         text: callRes.text
       };
-      // t3step3 REPLACE CODE BELOW
-      var personJWS = data.text;
-      if (personJWS == undefined || personJWS == null) {
+
+      var personData = data.text;
+      if (personData == undefined || personData == null) {
         res.jsonp({
           status: "ERROR",
           msg: "PERSON DATA NOT FOUND"
         });
-      } else {
-        console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
-        console.log(personJWS);
-
-        var personData;
-        // verify signature & decode JWS to get the person data in JSON
-        personData = securityHelper.verifyJWS(personJWS, _publicCertContent);
-      // t3step3 END REPLACE CODE
-
-        if (personData == undefined || personData == null)
-          res.jsonp({
-            status: "ERROR",
-            msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-          });
-        personData.uinfin = uinfin; // add the uinfin into the data to display on screen
-
-        console.log("\x1b[32m", "Person Data (Decoded/Decrypted):", "\x1b[0m");
-        console.log(JSON.stringify(personData));
-        // successful. return data back to frontend
-        res.jsonp({
-          status: "OK",
-          text: personData
-        });
       }
+      else {
+        if (_authLevel == "L0") {
+          personData = JSON.parse(personData);
+          personData.uinfin = uinfin; // add the uinfin into the data to display on screen
+
+          console.log("Person Data :".green);
+          console.log(JSON.stringify(personData));
+          // successful. return data back to frontend
+          res.jsonp({
+            status: "OK",
+            text: personData
+          });
+
+        }
+        //t3step3 PASTE CODE BELOW
+
+        //t3step3 END PASTE CODE
+        else {
+          throw new Error("Unknown Auth Level");
+        }
+      } // end else
     }
-  });
+  }); // end asynchronous call
 ```
 
 ### Step 6: function to prepare request for PERSON API
@@ -284,13 +282,16 @@ var strHeaders = "Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
 
 // Sign request and add Authorization Headers
-// t3step2b REPLACE CODE BELOW
+// t3step2b PASTE CODE BELOW
 
-
-// NOTE: include access token in Authorization header as "Bearer " (with space behind)
-  _.set(headers, "Authorization", "Bearer " + validToken);
-// t3step2b END REPLACE CODE
-
+// t3step2b END PASTE CODE
+if (!_.isEmpty(authHeaders)) {
+  _.set(headers, "Authorization", authHeaders + ",Bearer " + validToken);
+}
+else {
+  // NOTE: include access token in Authorization header as "Bearer " (with space behind)
+    _.set(headers, "Authorization", "Bearer " + validToken);
+}
 
 console.log("\x1b[32m", "Request Header for Person API:", "\x1b[0m");
 console.log(JSON.stringify(headers));
@@ -411,19 +412,34 @@ Save or restart app
 Paste below codes to: routes/index.js - t3step3
 
 ```javascript
-var personJWE = data.text;
-if (personJWE == undefined || personJWE == null) {
-  res.jsonp({
-    status: "ERROR",
-    msg: "PERSON DATA NOT FOUND"
-  });
-} else {
+else if (_authLevel == "L2") {
   console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
-  console.log(personJWE);
+  console.log(personData);
 
   // header.encryptedKey.iv.ciphertext.tag
-  var jweParts = personJWE.split(".");
-  var personData = securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent);
+  var jweParts = personData.split(".");
+
+  securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent)
+    .then(personData => {
+      if (personData == undefined || personData == null)
+        res.jsonp({
+          status: "ERROR",
+          msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
+        });
+      personData.uinfin = uinfin; // add the uinfin into the data to display on screen
+
+      console.log("\x1b[32m", "Person Data (Decoded/Decrypted):", "\x1b[0m");
+      console.log(JSON.stringify(personData));
+      // successful. return data back to frontend
+      res.jsonp({
+        status: "OK",
+        text: personData
+      });
+    })
+    .catch(error => {
+      console.error("Error with decrypting JWE: %s".red, error);
+    })
+}
   ```
 
   Save or restart app
