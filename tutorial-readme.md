@@ -109,7 +109,7 @@ request
   .end(function(callErr, callRes) {
     if (callErr) {
       // ERROR
-      console.log("\x1b[31m", "Error from Token API:", "\x1b[0m");
+      console.log("Error from Token API:".red);
       console.log(callErr.status);
       console.log(callErr.response.req.res.text);
       res.jsonp({
@@ -122,7 +122,7 @@ request
         body: callRes.body,
         text: callRes.text
       };
-      console.log("\x1b[32m", "Response from Token API:", "\x1b[0m");
+      console.log("Response from Token API:".green);
       console.log(JSON.stringify(data.body));
 
       var accessToken = data.body.access_token;
@@ -162,7 +162,7 @@ var headers = querystring.parse(strHeaders);
 // t3step2a END PASTE CODE
 
 
-console.log("\x1b[32m", "Request Header for Token API:", "\x1b[0m");
+console.log("Request Header for Token API:".green);
 console.log(JSON.stringify(headers));
 
 var request = restClient.post(_tokenApiUrl);
@@ -194,7 +194,7 @@ if (decoded == undefined || decoded == null) {
   })
 }
 
-console.log("\x1b[32m", "Decoded Access Token:", "\x1b[0m");
+console.log("Decoded Access Token:".green);
 console.log(JSON.stringify(decoded));
 
 var uinfin = decoded.sub;
@@ -223,7 +223,7 @@ request
   .buffer(true)
   .end(function(callErr, callRes) {
     if (callErr) {
-      console.log("\x1b[31m", "Error from Person API:", "\x1b[0m");
+      console.log("Error from Person API:".red);
       console.log(callErr.status);
       console.log(callErr.response.req.res.text);
       res.jsonp({
@@ -293,7 +293,7 @@ else {
     _.set(headers, "Authorization", "Bearer " + validToken);
 }
 
-console.log("\x1b[32m", "Request Header for Person API:", "\x1b[0m");
+console.log("Request Header for Person API:".green);
 console.log(JSON.stringify(headers));
 
 // invoke token API
@@ -394,10 +394,6 @@ var authHeaders = securityHelper.generateAuthorizationHeader(
   _clientSecret,
   _realm
 );
-
-if (!_.isEmpty(authHeaders)) {
-  _.set(headers, "Authorization", authHeaders + ",Bearer " + validToken);
-}
 ```
 
 Save or restart app
@@ -413,7 +409,7 @@ Paste below codes to: routes/index.js - t3step3
 
 ```javascript
 else if (_authLevel == "L2") {
-  console.log("\x1b[32m", "Response from Person API:", "\x1b[0m");
+  console.log("Response from Person API:".green);
   console.log(personData);
 
   // header.encryptedKey.iv.ciphertext.tag
@@ -428,7 +424,7 @@ else if (_authLevel == "L2") {
         });
       personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
-      console.log("\x1b[32m", "Person Data (Decoded/Decrypted):", "\x1b[0m");
+      console.log("Person Data (Decoded/Decrypted):".green);
       console.log(JSON.stringify(personData));
       // successful. return data back to frontend
       res.jsonp({
