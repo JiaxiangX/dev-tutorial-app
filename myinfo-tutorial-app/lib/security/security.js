@@ -5,8 +5,10 @@ const nonce = require('nonce')();
 const crypto = require('crypto');
 const qs = require('querystring');
 const jwt = require('jsonwebtoken');
-const jose = require('jose');
+// const jose = require('jose');
+const jose = require('node-jose');
 const URLSafeBase64 = require('urlsafe-base64');
+const colors = require('colors');
 
 var security = {};
 
@@ -66,7 +68,7 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // iii) concatenate request elements (HTTP method + url + base string parameters)
   var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
 
-  console.log("\x1b[32m", "Base String:", "\x1b[0m");
+  console.log("Base String:".green);
   console.log(baseString);
 
   // C) Signing Base String to get Digital Signature
@@ -123,45 +125,48 @@ security.verifyJWS = function verifyJWS(jws, publicCert) {
     return decoded;
   }
   catch(error) {
-    console.error("\x1b[31mError with verifying and decoding JWS:\x1b[0m %s", error);
+    console.error("Error with verifying and decoding JWE: %s".red, error);
     throw("Error with verifying and decoding JWS");
   }
 }
 
 // Decrypt JWE using private key
 security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, tag, privateKey) {
-  console.log("\x1b[32mDecrypting JWE \x1b[0m(Format: \x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m)","header",".","encryptedKey",".","iv",".","cipherText",".","tag");
-  console.log("\x1b[31m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[36m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[32m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[35m%s\x1b[0m\x1b[1m%s\x1b[0m\x1b[33m%s\x1b[0m",header,".",encryptedKey,".",iv,".",cipherText,".",tag);
-  try {
-    // aad (Additional Authentication Data) - ensures integrity of cipherText
-    var aad = Buffer.from(header, 'ascii');
-    // header contains the encryption algorithms
-    header = JSON.parse(URLSafeBase64.decode(header));
-    // iv (Initialisation Vector) - secure random value
-    iv = URLSafeBase64.decode(iv);
-    // cipherText - encrypted payload
-    cipherText = URLSafeBase64.decode(cipherText);
-    // tag - ensures integrity of cipherText and aad
-    tag = Buffer.from(tag, "base64");
-    // encryptedKey contains CEK (Content Encryption Key)
-    encryptedKey = URLSafeBase64.decode(encryptedKey);
+  console.log("Decrypting JWE".green + " (Format: " + "header".red + "." + "encryptedKey".cyan + "." + "iv".green + "." + "cipherText".magenta + "." + "tag".yellow + ")");
+  console.log(header.red + "." + encryptedKey.cyan + "." + iv.green + "." + cipherText.magenta + "." + tag.yellow);
+  return new Promise((resolve, reject) => {
 
-    // specify algorithm for encryptedKey ("RSA1_5")
-    var rsa = new jose.jwa(header.alg);
-    // => decrypt encryptedKey using private key, to get CEK (Content Encryption Key)
-    var contentEncryptionKey = rsa.unwrapKey(encryptedKey, fs.readFileSync(privateKey, 'utf8'));
+    var keystore = jose.JWK.createKeyStore();
 
-    // specify algorithm for cipherText ("A128CBC-HS256")
-    var aes = new jose.jwa(header.enc);
-    // => decrypt cipherText using contentEncryptionKey + iv, and validates against aad & tag
-    var plain = aes.decrypt(cipherText, tag, aad, iv, contentEncryptionKey);
+    console.log((new Buffer(header,'base64')).toString('ascii'));
 
-    return JSON.parse(plain);
-  }
-  catch(error) {
-    console.error("\x1b[31mError with decrypting JWE:\x1b[0m %s", error);
-    throw("Error with decrypting JWE");
-  }
+    var data = {
+      "type": "compact",
+      "ciphertext": cipherText,
+      "protected": header,
+      "encrypted_key": encryptedKey,
+      "tag": tag,
+      "iv": iv,
+      "header": JSON.parse(jose.util.base64url.decode(header).toString())
+    };
+    keystore.add(fs.readFileSync(privateKey, 'utf8'), "pem")
+      .then(function(jweKey) {
+        // {result} is a jose.JWK.Key
+        jose.JWE.createDecrypt(jweKey)
+          .decrypt(data)
+          .then(function(result) {
+            resolve(JSON.parse(result.payload.toString()));
+          })
+          .catch(function(error) {
+            reject(error);
+          });
+      });
+
+  })
+  .catch (error => {
+    console.error("Error with decrypting JWE: %s".red, error);
+    throw "Error with decrypting JWE";
+  })
 }
 
 module.exports = security;

@@ -98,6 +98,14 @@
       // Formulate the Authorise URL with the required parameters.
       // Redirect to the formulated Authorise URL.
       // t2step1 PASTE CODE HERE
+      var authoriseUrl = authApiUrl +
+        "?client_id=" + clientId +
+        "&attributes=" + attributes +
+        "&purpose=" + purpose +
+        "&state=" + state +
+        "&redirect_uri=" + redirectUrl;
+
+      window.location = authoriseUrl;
 
       // t2step1 END PASTE CODE
     }
@@ -133,6 +141,20 @@
       // prefill form data
       var formValues = null;
       // t2step7 PASTE CODE HERE
+      var formValues = {
+        "uinfin": data.uinfin,
+        "name": data.name.value,
+        "sex": data.sex.value,
+        "race": data.race.value,
+        "nationality": data.nationality.value,
+        "dob": data.dob.value,
+        "email": data.email.value,
+        "mobileno": toStr(data.mobileno, 'PHONENUMLOCAL'),
+        "regadd": toStr(data.regadd, 'ADDRESSLOCAL'),
+        "housingtype": toStr(data, 'HOUSINGTYPE'),
+        "marital": data.marital.value,
+        "edulevel": data.edulevel.value,
+      };
 
       // t2step7 END PASTE CODE
 
