@@ -6,13 +6,6 @@ If you've yet to install Nodejs or npm, please use this [link](https://nodejs.or
 
 If you have both Nodejs installed, please ensure Nodejs version is at least v6. Check using `node -v` command.
 
-
-### Install nodemon
-Open terminal or command prompt, and run following command:
-```
-npm install -g nodemon
-```
-
 ### Install Tutorial App dependencies
 Access the downloaded tutorial material and navigate to myinfo-tutorial-app, then run the following command:
 ```
@@ -41,7 +34,7 @@ Access the following URL `http://localhost:3001` from your browser
 ![myinfo-tutorial-app](myinfo-tutorial-app-landing.jpg)
 
 If you can see the page above, it means your setup is complete and you are ready for the tutorial!
-
+Please note that this is a blank tutorial app, you have to follow the tutorial to see the expected results.
 >Please contact the facilitators if you are having difficulties with the setup
 
 
@@ -71,15 +64,9 @@ MyInfo API Specs : [MyInfo Developer & Partner Portal](https://myinfo-api.app.go
 ## Getting Started
 1. Open cmd or terminal
 2. Change your directory to myinfo-tutorial-app root folder
-3. Run "npm install -g nodemon" (If you have not done so)
-4. Run "npm install" (If you have not done so)
+3. Run "npm install" (If you have not done so)
 
-## To Start The Sample App
-Windows - `start.bat`
-
-Linux/Mac - `./start.sh`
-
-### Step 1: Function for calling Authorise API
+### Step 1: Function for calling Authorise API (Enable "RETRIEVE MYINFO" Button)
 Paste below codes to: `views/html/index.html` - `t2step1`
 
 ```javascript
@@ -93,7 +80,7 @@ var authoriseUrl = authApiUrl +
 window.location = authoriseUrl;
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -176,7 +163,7 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
   request.send(params);
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -206,7 +193,7 @@ if (uinfin == undefined || uinfin == null) {
 }
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -308,7 +295,7 @@ if (!_.isUndefined(params) && !_.isEmpty(params))
   request.query(params);
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -334,7 +321,7 @@ var formValues = {
 };
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -383,7 +370,7 @@ if (!_.isEmpty(authHeaders)) {
 Paste below codes to: `routes/index.js` - `t3step2b`
 
 ```javascript
-var authHeaders = securityHelper.generateAuthorizationHeader(
+authHeaders = securityHelper.generateAuthorizationHeader(
   url,
   params,
   method,
@@ -396,7 +383,7 @@ var authHeaders = securityHelper.generateAuthorizationHeader(
 );
 ```
 
-Save or restart app
+Restart app
 
 #### Login Credentials
 >UINFIN: S9812381D  
@@ -408,37 +395,32 @@ Save or restart app
 Paste below codes to: routes/index.js - t3step3
 
 ```javascript
-else if (_authLevel == "L2") {
-  console.log("Response from Person API:".green);
-  console.log(personData);
+// header.encryptedKey.iv.ciphertext.tag
+var jweParts = personData.split(".");
 
-  // header.encryptedKey.iv.ciphertext.tag
-  var jweParts = personData.split(".");
-
-  securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent)
-    .then(personData => {
-      if (personData == undefined || personData == null)
-        res.jsonp({
-          status: "ERROR",
-          msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-        });
-      personData.uinfin = uinfin; // add the uinfin into the data to display on screen
-
-      console.log("Person Data (Decoded/Decrypted):".green);
-      console.log(JSON.stringify(personData));
-      // successful. return data back to frontend
+securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], _privateKeyContent)
+  .then(personData => {
+    if (personData == undefined || personData == null)
       res.jsonp({
-        status: "OK",
-        text: personData
+        status: "ERROR",
+        msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
       });
-    })
-    .catch(error => {
-      console.error("Error with decrypting JWE: %s".red, error);
-    })
-}
+    personData.uinfin = uinfin; // add the uinfin into the data to display on screen
+
+    console.log("Person Data (Decoded/Decrypted):".green);
+    console.log(JSON.stringify(personData));
+    // successful. return data back to frontend
+    res.jsonp({
+      status: "OK",
+      text: personData
+    });
+  })
+  .catch(error => {
+    console.error("Error with decrypting JWE: %s".red, error);
+  })
   ```
 
-  Save or restart app
+  Restart app
 
   #### Login Credentials
   >UINFIN: S9812381D  

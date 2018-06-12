@@ -186,11 +186,10 @@ function callPersonAPI(accessToken, res) {
             });
 
           }
-          //t3step3 PASTE CODE BELOW
-          else if (_authLevel == "L2") {
+          else if(_authLevel == "L2"){
             console.log("Response from Person API:".green);
             console.log(personData);
-
+            //t3step3 PASTE CODE BELOW
             // header.encryptedKey.iv.ciphertext.tag
             var jweParts = personData.split(".");
 
@@ -214,8 +213,8 @@ function callPersonAPI(accessToken, res) {
               .catch(error => {
                 console.error("Error with decrypting JWE: %s".red, error);
               })
+            //t3step3 END PASTE CODE
           }
-          //t3step3 END PASTE CODE
           else {
             throw new Error("Unknown Auth Level");
           }
@@ -283,6 +282,21 @@ function createTokenRequest(code) {
   // Set Params
   if (!_.isUndefined(params) && !_.isEmpty(params))
     request.send(params);
+  // t3step2a END PASTE CODE
+
+
+  console.log("Request Header for Token API:".green);
+  console.log(JSON.stringify(headers));
+
+  var request = restClient.post(_tokenApiUrl);
+
+  // Set headers
+  if (!_.isUndefined(headers) && !_.isEmpty(headers))
+    request.set(headers);
+
+  // Set Params
+  if (!_.isUndefined(params) && !_.isEmpty(params))
+    request.send(params);
   // t2step3 END PASTE CODE
 
   console.log("Sending Token Request >>>".green);
@@ -307,10 +321,11 @@ function createPersonRequest(uinfin, validToken) {
   // assemble headers for Person API
   var strHeaders = "Cache-Control=" + cacheCtl;
   var headers = querystring.parse(strHeaders);
+  var authHeaders;
 
   // Sign request and add Authorization Headers
   // t3step2b PASTE CODE BELOW
-  var authHeaders = securityHelper.generateAuthorizationHeader(
+  authHeaders = securityHelper.generateAuthorizationHeader(
     url,
     params,
     method,
