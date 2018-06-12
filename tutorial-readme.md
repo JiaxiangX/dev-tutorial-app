@@ -271,7 +271,7 @@ var params = querystring.parse(strParams);
 // assemble headers for Person API
 var strHeaders = "Cache-Control=" + cacheCtl;
 var headers = querystring.parse(strHeaders);
-
+var authHeaders;
 // Sign request and add Authorization Headers
 // t3step2b PASTE CODE BELOW
 
