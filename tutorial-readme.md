@@ -245,9 +245,13 @@ request
           });
 
         }
-        //t3step3 PASTE CODE BELOW
+        else if(_authLevel == "L2"){
+          console.log("Response from Person API:".green);
+          console.log(personData);
+          //t3step3 PASTE CODE BELOW
 
-        //t3step3 END PASTE CODE
+          //t3step3 END PASTE CODE
+        }
         else {
           throw new Error("Unknown Auth Level");
         }
