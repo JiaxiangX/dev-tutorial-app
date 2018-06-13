@@ -6,6 +6,13 @@ If you've yet to install Nodejs or npm, please use this [link](https://nodejs.or
 
 If you have both Nodejs installed, please ensure Nodejs version is at least v6. Check using `node -v` command.
 
+### Install Nodemon
+Please install nodemon using the command below.
+You will need to run this using root/admin access.
+```
+npm install -g nodemon
+```
+
 ### Install Tutorial App dependencies
 Access the downloaded tutorial material and navigate to myinfo-tutorial-app, then run the following command:
 ```
@@ -31,7 +38,7 @@ start.bat
 ### Access Tutorial App Landing Page
 Access the following URL `http://localhost:3001` from your browser
 
-![myinfo-tutorial-app](myinfo-tutorial-app-landing.jpg)
+<img alt="myinfo-tutorial-app" src="myinfo-tutorial-app-landing.jpg"/>
 
 If you can see the page above, it means your setup is complete and you are ready for the tutorial!
 
@@ -57,7 +64,7 @@ Try to invoke the API again by using the following UINFIN :
 * T0066846F
 
 
-MyInfo API Specs : [MyInfo Developer & Partner Portal](https://myinfo-api.app.gov.sg)
+MyInfo API Specs :<a href="https://myinfo-api.app.gov.sg" target="_blank">https://myinfo-api.app.gov.sg</a>
 
 # TUTORIAL 2
 
